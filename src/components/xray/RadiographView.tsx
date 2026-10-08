@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { demoSpecimen } from "@/data/mockScan";
 import type { EdgeKind } from "@/lib/demo/specimenTypes";
 import * as d from "@/lib/display";
+import { feedInfoFromScan } from "@/lib/client/scanClient";
 import { formatUtc } from "@/lib/format";
 import type { ScanResult } from "@/lib/types/scan";
 import { BrandMark } from "../ui/BrandMark";
@@ -69,7 +70,7 @@ export function RadiographView({ result, onReset }: Props) {
   const compact = size < 520;
   const symbol = result.token.symbol ?? d.DASH;
   const createdAt = Math.floor(Date.parse(result.caseFile.createdAt) / 1000);
-  const feed = demo ? "simulated" : result.mode === "partial" ? "partial" : "live";
+  const feed = useMemo(() => feedInfoFromScan(result), [result]);
 
   const nodeInfo = hoveredNode ? layout.clusterNodes.find((n) => n.address === hoveredNode) : undefined;
   const funderHovered = hoveredNode && layout.funder?.address === hoveredNode;
@@ -102,7 +103,7 @@ export function RadiographView({ result, onReset }: Props) {
             {copied ? "copied" : d.short(result.address, 6, 6)}
           </button>
         </div>
-        <FeedPill state={feed} />
+        <FeedPill info={feed} />
         <button
           type="button"
           onClick={onReset}

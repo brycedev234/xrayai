@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { activeSocials, socials } from "@/config/socials";
 import { caseFileText } from "@/lib/analysis/caseFile";
-import { demoOutcome, isDemoAddress, requestScan } from "@/lib/client/scanClient";
+import { demoOutcome, feedInfoFromHealth, feedInfoFromScan, isDemoAddress, requestScan } from "@/lib/client/scanClient";
 import { MemoryRateLimiter, SCAN_LIMIT } from "@/lib/rateLimit/scanRateLimit";
-import { DEMO_ADDRESS } from "@/data/demoScanResult";
+import { DEMO_ADDRESS, demoScanResult } from "@/data/demoScanResult";
 
 test("socials: blank URLs hidden, configured ones shown, unsafe schemes dropped", () => {
   assert.deepEqual(activeSocials(socials).map((s) => [s.key, s.url]), [["twitter", "https://x.com/xraydotio"]], "only X / Twitter ships");
@@ -42,4 +42,24 @@ test("client never falls back to demo data when the API fails", async () => {
   } finally {
     globalThis.fetch = original;
   }
+});
+
+test("feed readout: per-provider state from health, never LIVE without all three", () => {
+  const partial = feedInfoFromHealth({ status: "degraded", providers: { dexscreener: "available", goplus: "unavailable", helius: "not_configured" } }, 1);
+  assert.equal(partial.state, "partial");
+  assert.deepEqual(partial.sources.map((s) => [s.provider, s.state]), [["dexscreener", "up"], ["goplus", "down"], ["helius", "off"]]);
+  assert.equal(partial.sources[2].detail, "NO API KEY ON SERVER");
+
+  const live = feedInfoFromHealth({ status: "ok", providers: { dexscreener: "available", goplus: "available", helius: "configured" } }, 1);
+  assert.equal(live.state, "live");
+  assert.ok(live.sources.every((s) => s.state === "up"));
+
+  assert.equal(feedInfoFromHealth(null, null).state, "checking");
+  const down = feedInfoFromHealth(null, 1);
+  assert.equal(down.state, "simulated");
+  assert.equal(down.sources.length, 0);
+
+  const demo = feedInfoFromScan(demoScanResult());
+  assert.equal(demo.state, "simulated");
+  assert.equal(demo.sources.length, 0);
 });

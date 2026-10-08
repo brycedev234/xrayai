@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { ClientScanError, FeedState } from "@/lib/client/scanClient";
+import type { ClientScanError, FeedInfo } from "@/lib/client/scanClient";
 import { SAMPLE_ADDRESSES } from "@/lib/demo/generate";
 import { detectAddressKind } from "@/lib/validation/address";
 import { checkAddress, ScanErrorLine, type ScanSource } from "./scanInput";
@@ -69,7 +69,7 @@ function GhostSpecimen() {
 interface Props {
   onScan: (address: string, source: ScanSource) => void;
   error: { source: ScanSource; error: ClientScanError } | null;
-  feed: FeedState;
+  feed: FeedInfo;
   onClearError: () => void;
 }
 

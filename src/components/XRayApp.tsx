@@ -1,8 +1,8 @@
 "use client";
 
 import { AnimatePresence } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { demoOutcome, feedFromHealth, fetchHealth, isDemoAddress, requestScan, type ClientScanError, type FeedState } from "@/lib/client/scanClient";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { demoOutcome, feedInfoFromHealth, fetchHealth, isDemoAddress, requestScan, type ClientScanError, type HealthState } from "@/lib/client/scanClient";
 import type { ScanResult } from "@/lib/types/scan";
 import { AmbientField } from "./landing/AmbientField";
 import { Landing, type ScanSource } from "./landing/Landing";
@@ -20,16 +20,24 @@ const MIN_SCAN_MS = 1800;
 export function XRayApp() {
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
   const [error, setError] = useState<{ source: ScanSource; error: ClientScanError } | null>(null);
-  const [feed, setFeed] = useState<FeedState>("checking");
+  const [health, setHealth] = useState<{ value: HealthState | null; at: number | null }>({ value: null, at: null });
   const abortRef = useRef<AbortController | null>(null);
+  const aliveRef = useRef(true);
+
+  const checkHealth = useCallback(() => {
+    setHealth((h) => ({ ...h, at: null }));
+    fetchHealth().then((value) => aliveRef.current && setHealth({ value, at: Date.now() }));
+  }, []);
 
   useEffect(() => {
-    let alive = true;
-    fetchHealth().then((h) => alive && setFeed(feedFromHealth(h)));
+    aliveRef.current = true;
+    checkHealth();
     return () => {
-      alive = false;
+      aliveRef.current = false;
     };
-  }, []);
+  }, [checkHealth]);
+
+  const feed = useMemo(() => ({ ...feedInfoFromHealth(health.value, health.at), recheck: checkHealth }), [health, checkHealth]);
 
   const startScan = useCallback(async (address: string, source: ScanSource = "hero") => {
     abortRef.current?.abort();
