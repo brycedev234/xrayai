@@ -236,7 +236,7 @@ The site shows one channel: X / Twitter at https://x.com/xraydotio, set in `src/
 | Nav | Section | Component |
 | --- | --- | --- |
 | | Hero | `landing/Landing.tsx` |
-| METHOD | Procedure / 01 (how it works: ingest, reconstruct, diagnose) | `site/HowItWorks.tsx` |
+| HOW IT WORKS | Procedure / 01 (how it works: ingest, reconstruct, diagnose) | `site/HowItWorks.tsx` |
 | SOCIALS | Signal / live | `site/SocialsSection.tsx` |
 | GENOME | Token genome / 02 | `site/GenomeSection.tsx` |
 | ANATOMY | Radiography / 03 | `site/AnatomySection.tsx` |
