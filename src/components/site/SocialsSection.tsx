@@ -6,7 +6,7 @@ import { IS_STATIC_PREVIEW } from "@/lib/client/scanClient";
 import { EASE, SectionHead } from "./SectionHead";
 
 /**
- * SIGNAL / 07: channels from config/socials.ts. Blank URLs are hidden.
+ * SIGNAL: channels from config/socials.ts. Sits directly after HOW IT WORKS. Blank URLs are hidden.
  * The static preview shows unconfigured channels dimmed so the layout can be
  * reviewed; the deployed site never renders a channel without a URL.
  */
@@ -16,10 +16,10 @@ export function SocialsSection() {
   const rows = live.length ? live.map((c) => ({ ...c, url: c.url as string | null })) : placeholders.map((c) => ({ ...c, url: null as string | null }));
 
   return (
-    <section id="socials" className="relative border-t border-white/[0.05] px-4 pb-28 pt-24 sm:px-8 sm:pb-40 sm:pt-32">
+    <section id="socials" className="relative border-t border-white/[0.05] px-4 pb-24 pt-24 sm:px-8 sm:pb-32 sm:pt-32">
       <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-wrap items-end justify-between gap-8">
-          <SectionHead eyebrow="SIGNAL / 07" lines={["FOLLOW", "THE SIGNAL."]} copy="Development, scans, discoveries and project updates." />
+          <SectionHead eyebrow="SIGNAL / LIVE" lines={["FOLLOW", "THE SIGNAL."]} copy="Development, scans, discoveries and project updates." />
           <p className="max-w-[30ch] font-mono text-[11px] leading-relaxed tracking-[0.08em] text-mute">
             {rows.length ? `${live.length || rows.length} CHANNEL${(live.length || rows.length) === 1 ? "" : "S"} · OUTBOUND ONLY` : "NO CHANNELS BROADCASTING YET."}
           </p>

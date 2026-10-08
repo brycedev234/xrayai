@@ -8,12 +8,12 @@ import { FeedPill } from "../ui/FeedPill";
 
 export const NAV_ITEMS: { id: string; label: string }[] = [
   { id: "how-it-works", label: "METHOD" },
+  { id: "socials", label: "SOCIALS" },
   { id: "genome", label: "GENOME" },
   { id: "anatomy", label: "ANATOMY" },
   { id: "mass", label: "MASS" },
   { id: "flow", label: "FLOW" },
   { id: "case-file", label: "CASE FILE" },
-  { id: "socials", label: "SOCIALS" },
 ];
 
 export const NAV_HEIGHT = 64;

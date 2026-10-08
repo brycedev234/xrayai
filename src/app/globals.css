@@ -316,6 +316,47 @@ body {
   }
 }
 
+/* ---------- How it works ---------- */
+.wire__particle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 6px;
+  background: var(--phosphor);
+  box-shadow: 0 0 6px rgba(127, 227, 255, 0.8);
+  animation: wire-v 1.6s linear infinite;
+}
+@keyframes wire-v {
+  from { transform: translateY(-6px); }
+  to { transform: translateY(24px); }
+}
+@media (min-width: 640px) {
+  .wire__particle {
+    width: 6px;
+    height: 1px;
+    animation-name: wire-h;
+  }
+}
+@keyframes wire-h {
+  from { transform: translateX(-6px); }
+  to { transform: translateX(40px); }
+}
+.wave-trace {
+  stroke-dasharray: 18 82;
+  animation: wave-trace 2.4s linear infinite;
+}
+@keyframes wave-trace {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wire__particle,
+  .wave-trace {
+    animation: none !important;
+  }
+}
+
 /* ---------- Site sections ---------- */
 .landing {
   scroll-behavior: smooth;
