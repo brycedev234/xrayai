@@ -6,7 +6,7 @@
  * surfaced as an error; there is no silent fallback to example numbers.
  */
 
-import type { ScanErrorBody, ScanErrorCode, ScanResult } from "@/lib/types/scan";
+import type { ProviderId, ScanErrorBody, ScanErrorCode, ScanResult, SourceResult } from "@/lib/types/scan";
 import { DEMO_ADDRESS, demoScanResult } from "@/data/demoScanResult";
 
 /** Set by scripts/build-preview.mjs for the static, server-less preview. */
@@ -104,4 +104,73 @@ export function feedFromHealth(h: HealthState | null): FeedState {
   if (!p) return "simulated";
   if (p.dexscreener === "available" && p.goplus === "available" && p.helius === "configured") return "live";
   return p.dexscreener === "available" || p.goplus === "available" ? "partial" : "simulated";
+}
+
+/** One provider row in the feed readout. */
+export interface FeedSource {
+  provider: ProviderId;
+  state: "up" | "down" | "off";
+  detail: string;
+}
+
+/** What the feed indicator shows when opened. */
+export interface FeedInfo {
+  state: FeedState;
+  sources: FeedSource[];
+  note: string;
+  checkedAt: number | null;
+  recheck?: () => void;
+}
+
+const PROVIDER_ROLE: Record<ProviderId, string> = {
+  dexscreener: "MARKET · LIQUIDITY",
+  goplus: "CONTRACT SECURITY",
+  helius: "HOLDERS · WALLET GRAPH",
+};
+
+const FEED_NOTE: Record<FeedState, string> = {
+  live: "All providers answering. Scans read live chain data.",
+  partial: "Some providers are missing. Scans still run, and the case file marks every section it could not read.",
+  simulated: "No live providers. Only the sample scan runs.",
+  checking: "Checking providers.",
+};
+
+/** Feed readout from /api/health. */
+export function feedInfoFromHealth(h: HealthState | null, checkedAt: number | null): FeedInfo {
+  const state = checkedAt === null ? "checking" : feedFromHealth(h);
+  if (!h) {
+    const note = checkedAt === null ? FEED_NOTE.checking : IS_STATIC_PREVIEW ? "Preview build with no backend. Only the sample scan runs here." : "Scanner backend not reachable. Only the sample scan runs.";
+    return { state, sources: [], note, checkedAt };
+  }
+  const up = (v: string) => v === "available";
+  const sources: FeedSource[] = [
+    { provider: "dexscreener", state: up(h.providers.dexscreener) ? "up" : "down", detail: up(h.providers.dexscreener) ? PROVIDER_ROLE.dexscreener : "NOT RESPONDING" },
+    { provider: "goplus", state: up(h.providers.goplus) ? "up" : "down", detail: up(h.providers.goplus) ? PROVIDER_ROLE.goplus : "NOT RESPONDING" },
+    {
+      provider: "helius",
+      state: h.providers.helius === "configured" ? "up" : "off",
+      detail: h.providers.helius === "configured" ? PROVIDER_ROLE.helius : h.providers.helius === "disabled" ? "DISABLED ON SERVER" : "NO API KEY ON SERVER",
+    },
+  ];
+  return { state, sources, note: FEED_NOTE[state], checkedAt };
+}
+
+/** Feed readout for a finished scan, from the sources it actually used. */
+export function feedInfoFromScan(result: ScanResult): FeedInfo {
+  const state: FeedState = result.mode === "demo" ? "simulated" : result.mode === "partial" ? "partial" : "live";
+  if (result.mode === "demo") return { state, sources: [], note: "Sample scan. Every value comes from example data.", checkedAt: Date.parse(result.caseFile.createdAt) || null };
+  const order: ProviderId[] = ["dexscreener", "goplus", "helius"];
+  const sources = order
+    .map((provider) => sourceRow(provider, result.sources.filter((s) => s.provider === provider)))
+    .filter((s): s is FeedSource => s !== null);
+  const note = state === "live" ? "Every provider answered for this scan." : "Some providers did not answer for this scan. Their sections read UNAVAILABLE.";
+  return { state, sources, note, checkedAt: Date.parse(result.caseFile.createdAt) || null };
+}
+
+function sourceRow(provider: ProviderId, rows: SourceResult[]): FeedSource | null {
+  if (rows.length === 0) return null;
+  const failed = rows.find((r) => r.status === "error");
+  if (failed) return { provider, state: "down", detail: (failed.note ?? "FAILED").toUpperCase() };
+  if (rows.some((r) => r.status === "not_configured")) return { provider, state: "off", detail: provider === "helius" ? "NO API KEY ON SERVER" : "NOT CONFIGURED" };
+  return { provider, state: "up", detail: rows.map((r) => r.scope.toUpperCase()).join(" · ") };
 }

@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState, type RefObject } from "react";
-import type { FeedState } from "@/lib/client/scanClient";
+import type { FeedInfo } from "@/lib/client/scanClient";
 import { BrandMark } from "../ui/BrandMark";
 import { FeedPill } from "../ui/FeedPill";
 
@@ -20,7 +20,7 @@ export const NAV_HEIGHT = 64;
 
 interface Props {
   scroller: RefObject<HTMLElement | null>;
-  feed: FeedState;
+  feed: FeedInfo;
 }
 
 /** Sticky navigation inside the landing scroll container. */
@@ -107,7 +107,7 @@ export function TopNav({ scroller, feed }: Props) {
           })}
         </ul>
 
-        <FeedPill state={feed} className="hidden 2xl:inline-flex" />
+        <FeedPill info={feed} className="hidden 2xl:inline-flex" />
 
         <a
           href="#scan"
@@ -151,7 +151,7 @@ export function TopNav({ scroller, feed }: Props) {
               ))}
             </ul>
             <div className="mt-5 flex items-center justify-between gap-4">
-              <FeedPill state={feed} />
+              <FeedPill info={feed} align="left" side="above" />
               <a href="#scan" onClick={go("scan")} className="scan-button inline-flex h-[48px] items-center gap-3 rounded-[2px] px-6 font-display text-[11px] font-bold tracking-[0.26em]">
                 SCAN <span aria-hidden>→</span>
               </a>
