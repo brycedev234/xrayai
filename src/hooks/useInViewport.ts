@@ -26,3 +26,16 @@ export function useReducedMotion(): boolean {
   }, []);
   return reduced;
 }
+
+/** Tracks a media query. False until mounted, so server and first client render agree. */
+export function useMediaQuery(query: string): boolean {
+  const [match, setMatch] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    setMatch(mq.matches);
+    const on = () => setMatch(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, [query]);
+  return match;
+}

@@ -81,6 +81,11 @@ export function Landing({ onScan, error: externalError, feed, onClearError }: Pr
   const kind = detectAddressKind(value);
   const shownError = error ?? (externalError?.source === "hero" ? externalError.error : null);
 
+  const toScanInput = () => {
+    scrollerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => document.getElementById("ca-input")?.focus({ preventScroll: true }), 700);
+  };
+
   const submit = (address = value) => {
     const problem = checkAddress(address);
     if (problem) {
@@ -239,7 +244,8 @@ export function Landing({ onScan, error: externalError, feed, onClearError }: Pr
       </motion.footer>
       </div>
 
-      <HowItWorks />
+      <HowItWorks scroller={scrollerRef} onScanCta={toScanInput} />
+      <SocialsSection />
       <GenomeSection />
       <AnatomySection />
       <MassDetection />
@@ -247,14 +253,7 @@ export function Landing({ onScan, error: externalError, feed, onClearError }: Pr
       <CaseFile onOpen={() => onScan(SAMPLE_ADDRESSES.solana, "hero")} />
       <PhilosophySection />
       <FinalScanCTA onScan={(a) => onScan(a, "final")} error={externalError?.source === "final" ? externalError.error : null} onClearError={onClearError} />
-      <SocialsSection />
-      <Footer
-        onMethod={() => setMethodOpen(true)}
-        onTop={() => {
-          scrollerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-          setTimeout(() => document.getElementById("ca-input")?.focus({ preventScroll: true }), 700);
-        }}
-      />
+      <Footer onMethod={() => setMethodOpen(true)} onTop={toScanInput} />
 
       <MethodSheet open={methodOpen} onClose={() => setMethodOpen(false)} />
     </motion.main>
