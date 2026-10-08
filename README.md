@@ -236,7 +236,8 @@ The site shows one channel: X / Twitter at https://x.com/xraydotio, set in `src/
 | Nav | Section | Component |
 | --- | --- | --- |
 | | Hero | `landing/Landing.tsx` |
-| METHOD | Procedure / 01 | `site/HowItWorks.tsx` |
+| METHOD | Procedure / 01 (how it works: ingest, reconstruct, diagnose) | `site/HowItWorks.tsx` |
+| SOCIALS | Signal / live | `site/SocialsSection.tsx` |
 | GENOME | Token genome / 02 | `site/GenomeSection.tsx` |
 | ANATOMY | Radiography / 03 | `site/AnatomySection.tsx` |
 | MASS | Cluster analysis / 04 | `site/MassDetection.tsx` |
@@ -244,7 +245,9 @@ The site shows one channel: X / Twitter at https://x.com/xraydotio, set in `src/
 | CASE FILE | Scan output / 06 | `site/CaseFile.tsx` |
 | | Philosophy | `site/PhilosophySection.tsx` |
 | SCAN → | Final scan | `site/FinalScanCTA.tsx` |
-| SOCIALS | Signal / 07 (last tile) | `site/SocialsSection.tsx` |
+| | Footer | `site/Footer.tsx` |
+
+The findings in the How it works section are a labelled design example; they are never mixed into a real scan.
 
 The radiograph (`xray/RadiographView.tsx`) renders a live result through `xray/project.ts`, which maps only returned data onto the visual. The organ panel (`xray/OrganPanel.tsx`) lists each organ's values and findings, coverage, and the live state of every source.
 
