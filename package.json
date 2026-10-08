@@ -1,0 +1,30 @@
+{
+  "name": "onchain-xray",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "preview:build": "node scripts/build-preview.mjs",
+    "test": "node scripts/run-tests.mjs"
+  },
+  "dependencies": {
+    "framer-motion": "11.18.2",
+    "next": "15.5.27",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.3",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "autoprefixer": "10.4.21",
+    "esbuild": "0.25.9",
+    "postcss": "8.5.6",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.9.2"
+  }
+}
