@@ -61,6 +61,7 @@ export function RadiographView({ result, onReset }: Props) {
   const [highlightKind, setHighlightKind] = useState<EdgeKind | null>(null);
   const [hoveredCell, setHoveredCell] = useState<{ address: string; x: number; y: number } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [plain, setPlainState] = useState(true);
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
   const desktop = useMediaQuery("(min-width: 1024px)");
 
@@ -76,6 +77,23 @@ export function RadiographView({ result, onReset }: Props) {
   const funderHovered = hoveredNode && layout.funder?.address === hoveredNode;
   const cellInfo = hoveredCell ? scan.raw.holders.find((h) => h.address === hoveredCell.address) : undefined;
   const noPair = result.findings.some((f) => f.code === "NO_LIQUIDITY_PAIR_FOUND");
+
+  // Plain-English explanations default on; the choice is remembered per browser.
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("xray:plain") === "0") setPlainState(false);
+    } catch {
+      /* storage blocked: keep the default */
+    }
+  }, []);
+  const setPlain = (on: boolean) => {
+    setPlainState(on);
+    try {
+      localStorage.setItem("xray:plain", on ? "1" : "0");
+    } catch {
+      /* storage blocked: the toggle still works for this view */
+    }
+  };
 
   const copyAddress = async () => {
     try {
@@ -224,12 +242,12 @@ export function RadiographView({ result, onReset }: Props) {
           </div>
 
           <div className="readout-dock px-4 pb-4 sm:px-6 lg:absolute lg:bottom-6 lg:left-6 lg:p-0">
-            <MassReadout result={result} highlightKind={highlightKind} onHighlight={setHighlightKind} delay={TIMELINE.tumor[1] - 0.4} />
+            <MassReadout result={result} highlightKind={highlightKind} onHighlight={setHighlightKind} delay={TIMELINE.tumor[1] - 0.4} plain={plain} />
           </div>
         </section>
 
         <div className="panel-dock px-4 pb-4 sm:px-6 lg:min-h-0 lg:py-0 lg:pb-6 lg:pl-0">
-          <OrganPanel result={result} focus={focus} onFocus={setFocus} delay={0.9} />
+          <OrganPanel result={result} focus={focus} onFocus={setFocus} delay={0.9} plain={plain} onPlain={setPlain} />
         </div>
       </div>
 

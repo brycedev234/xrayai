@@ -631,3 +631,17 @@ a.channel:hover .channel__scan::after {
     animation: none;
   }
 }
+
+/* ---------- Scan result: verdict trace ---------- */
+.vital-trace {
+  animation: vital-trace 3s linear infinite;
+}
+@keyframes vital-trace {
+  from { transform: translateX(0); }
+  to { transform: translateX(-200px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vital-trace {
+    animation: none !important;
+  }
+}

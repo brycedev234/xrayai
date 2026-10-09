@@ -11,6 +11,7 @@ interface Props {
   highlightKind: EdgeKind | null;
   onHighlight: (kind: EdgeKind | null) => void;
   delay: number;
+  plain: boolean;
 }
 
 const motionProps = (delay: number) => ({
@@ -20,17 +21,17 @@ const motionProps = (delay: number) => ({
 });
 
 /** MASS card: the primary connected cluster, or why there is none. */
-export function MassReadout({ result, highlightKind, onHighlight, delay }: Props) {
+export function MassReadout({ result, highlightKind, onHighlight, delay, plain }: Props) {
   const { mass, cells } = result;
   const cluster = mass.clusters[0];
 
   if (!cluster) {
     const state =
       mass.graphState === "NOT_ENABLED"
-        ? { title: "DEEP RELATIONSHIP ANALYSIS NOT AVAILABLE", tone: "text-mute", body: "Wallet funding, transfers and entry timing were not traced in this scan: Helius is not configured on this server or did not respond. Holder concentration is still shown." }
+        ? { title: "DEEP RELATIONSHIP ANALYSIS NOT AVAILABLE", tone: "text-mute", body: "Wallet funding, transfers and entry timing were not traced in this scan: Helius is not configured on this server or did not respond. Holder concentration is still shown.", plain: "We couldn't check whether the big holders are connected." }
         : mass.graphState === "INSUFFICIENT_GRAPH_DATA"
-          ? { title: "INSUFFICIENT GRAPH DATA", tone: "text-amber", body: "Too few top holders could be traced to build a relationship graph." }
-          : { title: "NO MATERIAL CLUSTERS DETECTED", tone: "text-phosphor", body: `${mass.analyzedWallets} top holders traced. No funding, transfer or origin links connect them.` };
+          ? { title: "INSUFFICIENT GRAPH DATA", tone: "text-amber", body: "Too few top holders could be traced to build a relationship graph.", plain: "Not enough wallets could be traced to tell whether the big holders are connected." }
+          : { title: "NO MATERIAL CLUSTERS DETECTED", tone: "text-phosphor", body: `${mass.analyzedWallets} top holders traced. No funding, transfer or origin links connect them.`, plain: "The big holders look independent: no shared funder, no transfers between them." };
     return (
       <motion.section {...motionProps(delay)} className="glass relative w-full max-w-[340px] overflow-hidden rounded-[3px] p-5" aria-label="Mass readout">
         <div className="flex items-center gap-2 font-mono text-[10px] tracking-scan text-mute">
@@ -57,6 +58,7 @@ export function MassReadout({ result, highlightKind, onHighlight, delay }: Props
           </div>
         </dl>
         <p className="mt-4 text-[11px] leading-relaxed text-mute">{state.body}</p>
+        {plain && <p className="mt-2 text-[12px] leading-snug text-bone/75">{state.plain}</p>}
       </motion.section>
     );
   }
@@ -137,6 +139,11 @@ export function MassReadout({ result, highlightKind, onHighlight, delay }: Props
         Observed funding, transfer and timing links. They show wallets that appear connected, not who controls them or why.
         {mass.clusters.length > 1 ? ` ${mass.clusters.length - 1} more group${mass.clusters.length > 2 ? "s" : ""} in the panel.` : ""}
       </p>
+      {plain && (
+        <p className="mt-2 text-[12px] leading-snug text-bone/75">
+          These wallets look like they move together. If one group runs them, it could sell {cluster.combinedSupplyPercent === null ? "its share" : `${d.pct(cluster.combinedSupplyPercent)} of supply`} at once.
+        </p>
+      )}
     </motion.section>
   );
 }
