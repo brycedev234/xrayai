@@ -41,7 +41,7 @@ export function CaseFile({ onOpen }: { onOpen: () => void }) {
   return (
     <section id="case-file" className="relative px-4 pt-28 sm:px-8 sm:pt-40">
       <div className="mx-auto max-w-[1440px]">
-        <SectionHead eyebrow="SCAN OUTPUT / 06" lines={["EVERY SCAN", "LEAVES A CASE FILE."]} />
+        <SectionHead eyebrow="SCAN OUTPUT / 05" lines={["EVERY SCAN", "LEAVES A CASE FILE."]} />
 
         <div className="mt-16 grid grid-cols-1 items-start gap-10 lg:grid-cols-[220px_minmax(0,680px)_minmax(0,1fr)] lg:gap-14">
           <motion.dl

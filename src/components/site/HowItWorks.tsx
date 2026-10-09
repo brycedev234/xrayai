@@ -147,7 +147,7 @@ export function HowItWorks({ scroller, onScanCta }: Props) {
     <section id="how-it-works" className="relative px-4 sm:px-8">
       <div className="mx-auto max-w-[1440px] pt-28 sm:pt-40">
         <SectionHead
-          eyebrow="PROCEDURE / 01"
+          eyebrow="PROCEDURE / 06"
           lines={["ONE CONTRACT.", "FULL RADIOGRAPHY."]}
           copy={
             <>

@@ -73,18 +73,17 @@ export function evaluateVerdict(findings: Finding[], flags: StatusFlag[], mode: 
   const codes = new Set(flags.map((f) => f.code));
   const reasons = findings.filter((f) => f.status && f.status !== "PARTIAL_SCAN" && f.status !== "INSUFFICIENT_DATA").map((f) => f.label);
   const flagged = ["ANOMALOUS_STRUCTURE_DETECTED", "RELATIONSHIP_SIGNALS_DETECTED", "PRIVILEGED_AUTHORITY_ACTIVE", "HIGH_HOLDER_CONCENTRATION", "LOW_LIQUIDITY"].filter((c) => codes.has(c as StatusCode));
-  const limit = "A scan shows structure, not intent; it can't rule risk out.";
 
   if (codes.has("ANOMALOUS_STRUCTURE_DETECTED") || codes.has("PRIVILEGED_AUTHORITY_ACTIVE") || flagged.length >= 3) {
-    return { level: "SERIOUS_RED_FLAGS", label: "SERIOUS RED FLAGS", summary: `${flagged.length} flagged area${flagged.length > 1 ? "s" : ""}, including control or linked-wallet signals. ${limit}`, reasons };
+    return { level: "SERIOUS_RED_FLAGS", label: "SERIOUS RED FLAGS", summary: `${flagged.length} flagged area${flagged.length > 1 ? "s" : ""}, including control or linked-wallet signals.`, reasons };
   }
   if (flagged.length) {
-    return { level: "SOME_RED_FLAGS", label: "SOME RED FLAGS", summary: `${flagged.length} flagged area${flagged.length > 1 ? "s" : ""} worth checking before buying. ${limit}`, reasons };
+    return { level: "SOME_RED_FLAGS", label: "SOME RED FLAGS", summary: `${flagged.length} flagged area${flagged.length > 1 ? "s" : ""} worth checking before buying.`, reasons };
   }
   if (mode === "live" && !codes.has("INSUFFICIENT_DATA")) {
-    return { level: "FEW_RED_FLAGS", label: "FEW RED FLAGS FOUND", summary: `No major structural red flags in the data read. That is not a guarantee: ${limit.toLowerCase()}`, reasons: [] };
+    return { level: "FEW_RED_FLAGS", label: "FEW RED FLAGS FOUND", summary: `No major structural red flags in the data read. That is not a guarantee.`, reasons: [] };
   }
-  return { level: "NOT_ENOUGH_DATA", label: "NOT ENOUGH DATA FOR A VERDICT", summary: `Nothing flagged, but part of the scan is missing, so a clean result means little. ${limit}`, reasons: [] };
+  return { level: "NOT_ENOUGH_DATA", label: "NOT ENOUGH DATA FOR A VERDICT", summary: `Nothing flagged, but part of the scan is missing, so a clean result means little.`, reasons: [] };
 }
 
 export function statusLabel(code: StatusCode): string {

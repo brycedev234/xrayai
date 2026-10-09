@@ -244,13 +244,13 @@ export function Landing({ onScan, error: externalError, feed, onClearError }: Pr
       </motion.footer>
       </div>
 
-      <HowItWorks scroller={scrollerRef} onScanCta={toScanInput} />
       <SocialsSection />
       <GenomeSection />
       <AnatomySection />
       <MassDetection />
       <TransactionFlow />
       <CaseFile onOpen={() => onScan(SAMPLE_ADDRESSES.solana, "hero")} />
+      <HowItWorks scroller={scrollerRef} onScanCta={toScanInput} />
       <PhilosophySection />
       <FinalScanCTA onScan={(a) => onScan(a, "final")} error={externalError?.source === "final" ? externalError.error : null} onClearError={onClearError} />
       <Footer onMethod={() => setMethodOpen(true)} onTop={toScanInput} />

@@ -236,13 +236,13 @@ The site shows one channel: X / Twitter at https://x.com/xraydotio, set in `src/
 | Nav | Section | Component |
 | --- | --- | --- |
 | | Hero | `landing/Landing.tsx` |
-| HOW IT WORKS | Procedure / 01 (how it works: ingest, reconstruct, diagnose) | `site/HowItWorks.tsx` |
 | SOCIALS | Signal / live | `site/SocialsSection.tsx` |
-| GENOME | Token genome / 02 | `site/GenomeSection.tsx` |
-| ANATOMY | Radiography / 03 | `site/AnatomySection.tsx` |
-| MASS | Cluster analysis / 04 | `site/MassDetection.tsx` |
-| FLOW | Flow analysis / 05 | `site/TransactionFlow.tsx` |
-| CASE FILE | Scan output / 06 | `site/CaseFile.tsx` |
+| GENOME | Token genome / 01 | `site/GenomeSection.tsx` |
+| ANATOMY | Radiography / 02 | `site/AnatomySection.tsx` |
+| MASS | Cluster analysis / 03 | `site/MassDetection.tsx` |
+| FLOW | Flow analysis / 04 | `site/TransactionFlow.tsx` |
+| CASE FILE | Scan output / 05 | `site/CaseFile.tsx` |
+| HOW IT WORKS | Procedure / 06 (how it works: ingest, reconstruct, diagnose) | `site/HowItWorks.tsx` |
 | | Philosophy | `site/PhilosophySection.tsx` |
 | SCAN → | Final scan | `site/FinalScanCTA.tsx` |
 | | Footer | `site/Footer.tsx` |

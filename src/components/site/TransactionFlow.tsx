@@ -96,7 +96,7 @@ export function TransactionFlow() {
       <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-wrap items-end justify-between gap-8">
           <SectionHead
-            eyebrow="FLOW ANALYSIS / 05"
+            eyebrow="FLOW ANALYSIS / 04"
             lines={["WATCH CAPITAL", "MOVE."]}
             copy={
               <>

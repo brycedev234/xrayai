@@ -58,6 +58,8 @@ The Enhanced Transactions API and the Wallet API are not on every Helius plan. W
 
 A plan limitation is not a failure: the scan stays LIVE and coverage shows IDENTITY as not observed.
 
+Placeholder labels from the Wallet API ("unknown", "wallet", "user", empty strings) and bare on-chain domains such as `name.sol` are not identities: those holders stay UNKNOWN and are traced in the wallet graph. Only a real label (an exchange, DEX, protocol, named service) changes how a holder or funder is read.
+
 ## 5b. Verify the endpoint paths
 
 The RPC methods (`getAccountInfo`, `getMultipleAccounts`, `getTokenSupply`, `getTokenLargestAccounts`, `getTokenAccountsByOwner`, `getSignaturesForAddress`, `getTransaction`) and DAS methods (`getAsset`, `getAssetsByAuthority`) are standard. The Enhanced Transactions API (`/v0/addresses/{address}/transactions`) and the Wallet API (`/v1/wallet/{address}/funded-by`, `/v1/wallet/{address}/identity`) are Helius-specific and their paths and response fields should be checked against the current Helius docs before going live. All URLs are in the `ENDPOINTS` object at the top of `helius.ts`, and the response parsers accept the common field-name variants.
