@@ -7,13 +7,13 @@ import { BrandMark } from "../ui/BrandMark";
 import { FeedPill } from "../ui/FeedPill";
 
 export const NAV_ITEMS: { id: string; label: string }[] = [
-  { id: "how-it-works", label: "HOW IT WORKS" },
   { id: "socials", label: "SOCIALS" },
   { id: "genome", label: "GENOME" },
   { id: "anatomy", label: "ANATOMY" },
   { id: "mass", label: "MASS" },
   { id: "flow", label: "FLOW" },
   { id: "case-file", label: "CASE FILE" },
+  { id: "how-it-works", label: "HOW IT WORKS" },
 ];
 
 export const NAV_HEIGHT = 64;

@@ -300,7 +300,7 @@ export function AnatomySection() {
     <section id="anatomy" className="relative px-4 pb-10 pt-28 sm:px-8 sm:pt-40">
       <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-wrap items-end justify-between gap-8">
-          <SectionHead eyebrow="RADIOGRAPHY / 03" lines={["EVERY PART", "MEANS SOMETHING."]} />
+          <SectionHead eyebrow="RADIOGRAPHY / 02" lines={["EVERY PART", "MEANS SOMETHING."]} />
           <p className="max-w-[32ch] font-mono text-[11px] leading-relaxed tracking-[0.08em] text-mute">
             SPECIMEN ${DEMO_SCAN.token.symbol} · {DEMO_SCAN.token.chain} · DESIGN EXAMPLE · DEMO RADIOGRAPHY
           </p>

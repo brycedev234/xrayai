@@ -229,6 +229,45 @@ test("Helius plan without Enhanced / Wallet APIs → raw RPC fallback still find
   }
 });
 
+test("Wallet API placeholder labels (\"unknown\", domains) leave ordinary holders in the graph", async () => {
+  const restore = enableHelius();
+  const world = makeWorld();
+  const [W1, W2, W3, W4, W5] = world.w;
+  const F = world.funder;
+  const blank = (w: string) => ({ address: w, type: "unknown", name: "Unknown", category: "Unknown", tags: [] });
+  const m = mockFetch(
+    heliusHandler(world, {
+      identities: () => ({ [W1]: blank(W1), [W2]: blank(W2), [W3]: { address: W3, type: "wallet", name: "bundler.sol", category: "", tags: [], domainNames: ["bundler.sol"] }, [W4]: blank(W4), [W5]: blank(W5) }),
+      funders: () => ({
+        [W1]: { funder: F, funderName: null, funderType: "unknown", signature: "a", amount: 0.5 },
+        [W2]: { funder: F, funderName: null, funderType: "unknown", signature: "b", amount: 0.5 },
+        [W3]: { funder: F, funderName: null, funderType: null, signature: "c", amount: 0.5 },
+      }),
+    }),
+  );
+  try {
+    const out = await scanToken(world.mint);
+    assert.ok(out.ok);
+    const r = out.result;
+    assert.equal(r.mass.analyzedWallets, 5, "every ordinary holder is traced");
+    assert.notEqual(r.mass.graphState, "INSUFFICIENT_GRAPH_DATA");
+    assert.ok(r.mass.nodes.every((n) => n.classification === "UNKNOWN" && n.identity === null));
+    assert.ok(r.cells.holders.every((h) => h.identity === null), "no placeholder or domain shown as an identity");
+    assert.equal(r.mass.clusters.length, 1, "an unlabelled shared funder still links wallets");
+    assert.deepEqual(new Set(r.mass.clusters[0].wallets), new Set([W1, W2, W3]));
+  } finally {
+    m.restore();
+    restore();
+  }
+});
+
+test("classifyIdentity: placeholders stay UNKNOWN, real labels classify", () => {
+  for (const l of ["unknown", "Unknown", "wallet", "user", "N/A", "", "toly.sol"]) assert.equal(helius.classifyIdentity(l), "UNKNOWN", l);
+  assert.equal(helius.classifyIdentity("exchange", "Coinbase 2"), "CENTRALIZED_EXCHANGE");
+  assert.equal(helius.classifyIdentity("unknown", "Jupiter Aggregator"), "DEX");
+  assert.equal(helius.classifyIdentity("Magic Eden"), "KNOWN_SERVICE");
+});
+
 test("MASS with no cluster: a shared but service-like funder is a withdrawal source, not a link", async () => {
   const restore = enableHelius();
   const world = makeWorld();

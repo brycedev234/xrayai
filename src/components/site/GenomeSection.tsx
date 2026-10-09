@@ -59,7 +59,7 @@ export function GenomeSection() {
       <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-wrap items-end justify-between gap-8">
           <SectionHead
-            eyebrow="TOKEN GENOME / 02"
+            eyebrow="TOKEN GENOME / 01"
             lines={["READ", "THE DNA."]}
             copy="Before a single holder is traced, the mint itself is read: who can still create supply, freeze accounts or rewrite the token."
           />

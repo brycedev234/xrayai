@@ -56,7 +56,7 @@ export function MassDetection() {
     <section id="mass" className="relative overflow-hidden px-4 pt-28 sm:px-8 sm:pt-40">
       <div className="mass-section__glow" aria-hidden />
       <div className="relative mx-auto max-w-[1440px]">
-        <SectionHead eyebrow="CLUSTER ANALYSIS / 04" tone="infra" lines={["ONE WALLET CAN", "LOOK NORMAL.", "ELEVEN TOGETHER", "MAY NOT."]} />
+        <SectionHead eyebrow="CLUSTER ANALYSIS / 03" tone="infra" lines={["ONE WALLET CAN", "LOOK NORMAL.", "ELEVEN TOGETHER", "MAY NOT."]} />
 
         <div className="mt-16 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12">
           <div ref={stageRef} className="relative min-w-0 border border-white/[0.06] bg-[rgba(6,10,18,0.4)]">

@@ -172,10 +172,13 @@ export async function scanToken(address: string, opts: { now?: number } = {}): P
     mass = { ...mass, graphState: "INSUFFICIENT_GRAPH_DATA" };
   } else if (heliusOn) {
     const byAddress = new Map(candidates.map((c) => [c.address, c]));
+    // Graph the same holders that count toward concentration: only wallets an
+    // identity moved out of it (exchange, DEX, protocol, bridge) are left out.
+    const finalClass = new Map(cells.holders.map((h) => [h.address, h.classification]));
     let inputs: GraphWalletInput[] = intel
       .filter((w) => {
-        const cls = data(w.identity)?.classification;
-        return !cls || cls === "UNKNOWN";
+        const cls = finalClass.get(w.wallet);
+        return !cls || cls === "WALLET" || cls === "ORIGIN" || cls === "LOCKED";
       })
       .map((w) => ({
         wallet: w.wallet,

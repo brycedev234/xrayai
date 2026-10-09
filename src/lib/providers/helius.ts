@@ -422,9 +422,28 @@ export interface WalletIdentity {
   classification: IdentityClass;
 }
 
-/** Maps free-form provider categories onto the fixed identity classes. */
+/**
+ * Labels that say "no known entity". Providers return them for ordinary
+ * wallets; they must never be read as a service.
+ */
+const PLACEHOLDER_LABEL = /^(unknown|unidentified|unlabell?ed|none|null|n\/?a|other|wallet|user|individual|personal|eoa|account|address)$/;
+/** On-chain domains (toly.sol, kash.superteam) name a holder, not an entity. */
+const DOMAIN_NAME = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i;
+
+/** A provider label worth keeping, or null for placeholders and domain names. */
+export function entityLabel(label: string | null | undefined): string | null {
+  const t = label?.trim();
+  if (!t || PLACEHOLDER_LABEL.test(t.toLowerCase()) || DOMAIN_NAME.test(t)) return null;
+  return t;
+}
+
+/**
+ * Maps free-form provider categories onto the fixed identity classes.
+ * Placeholder labels are dropped first, so an ordinary wallet stays UNKNOWN;
+ * only a real, unmatched label falls through to KNOWN_SERVICE.
+ */
 export function classifyIdentity(...labels: (string | null | undefined)[]): IdentityClass {
-  const text = labels.filter(Boolean).join(" ").toLowerCase();
+  const text = labels.map(entityLabel).filter(Boolean).join(" ").toLowerCase();
   if (!text) return "UNKNOWN";
   if (/(exchange|\bcex\b|binance|coinbase|kraken|okx|bybit|kucoin|gate\.io|mexc|bitget|htx|crypto\.com)/.test(text)) return "CENTRALIZED_EXCHANGE";
   if (/(bridge|wormhole|debridge|allbridge|mayan|portal)/.test(text)) return "BRIDGE";
@@ -436,13 +455,13 @@ export function classifyIdentity(...labels: (string | null | undefined)[]): Iden
 
 export function getWalletIdentity(wallet: string): Promise<HeliusResult<WalletIdentity>> {
   return guarded(async (key) => {
-    const res = await cached(`helius:identity:${wallet}`, TTL.identity, async () => {
+    const res = await cached(`helius:identity:v2:${wallet}`, TTL.identity, async () => {
       try {
         const r = await fetchJson<Record<string, unknown>>("helius", ENDPOINTS.identity(key, wallet), { timeoutMs: 6000 });
-        const name = str(r.name) ?? str(r.label) ?? str(r.entity);
-        const category = str(r.type) ?? str(r.category);
-        const tags = Array.isArray(r.tags) ? r.tags.filter((t) => typeof t === "string").join(" ") : null;
-        return { name, classification: name || category || tags ? classifyIdentity(category, name, tags) : "UNKNOWN" } satisfies WalletIdentity;
+        const name = entityLabel(str(r.name) ?? str(r.label) ?? str(r.entity));
+        const tags = Array.isArray(r.tags) ? r.tags.filter((t): t is string => typeof t === "string") : [];
+        const classification = classifyIdentity(str(r.type), str(r.category), name, ...tags);
+        return { name: classification === "UNKNOWN" ? null : name, classification } satisfies WalletIdentity;
       } catch (err) {
         // 404 = no known identity, which is a valid answer. Any other failure
         // (plan without the Wallet API, outage) leaves identity unavailable.
@@ -468,7 +487,7 @@ export interface FunderInfo {
 export function getOriginalFunder(wallet: string): Promise<HeliusResult<FunderInfo>> {
   return guarded(async (key) => {
     const res = await cached(
-      `helius:funder:${wallet}`,
+      `helius:funder:v2:${wallet}`,
       TTL.funder,
       async () => {
         try {
@@ -476,8 +495,8 @@ export function getOriginalFunder(wallet: string): Promise<HeliusResult<FunderIn
           const d = (r.data && typeof r.data === "object" ? r.data : r) as Record<string, unknown>;
           const funder = str(d.funder) ?? str(d.fundedBy) ?? str(d.source) ?? str(d.address);
           if (!funder) return null;
-          const funderName = str(d.funderName) ?? str(d.name) ?? str(d.label);
-          const funderType = str(d.funderType) ?? str(d.type) ?? str(d.category);
+          const funderName = entityLabel(str(d.funderName) ?? str(d.name) ?? str(d.label));
+          const funderType = entityLabel(str(d.funderType) ?? str(d.type) ?? str(d.category));
           const lamports = num(d.amount);
           return {
             funder,
