@@ -7,7 +7,7 @@ import { BrandMark } from "../ui/BrandMark";
 import { FeedPill } from "../ui/FeedPill";
 
 export const NAV_ITEMS: { id: string; label: string }[] = [
-  { id: "how-it-works", label: "METHOD" },
+  { id: "how-it-works", label: "HOW IT WORKS" },
   { id: "socials", label: "SOCIALS" },
   { id: "genome", label: "GENOME" },
   { id: "anatomy", label: "ANATOMY" },
